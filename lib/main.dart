@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ui_study/enums/currency.dart';
+import 'package:flutter_ui_study/models/bank_account.dart';
 import 'package:flutter_ui_study/widgets/button.dart';
 import 'package:flutter_ui_study/widgets/currency_card.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final List<BankAccount> bankAccounts = [
+    BankAccount(currency: Currency.euro, balance: 6428),
+    BankAccount(currency: Currency.dollar, balance: 55622),
+    BankAccount(currency: Currency.rupee, balance: 28981),
+    BankAccount(currency: Currency.bitcoin, balance: 9785),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -117,38 +126,30 @@ class MyApp extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                const CurrencyCard(
-                  name: "Euro",
-                  code: "EUR",
-                  amount: "6 428",
-                  icon: Icons.euro_rounded,
-                  isInverted: false,
-                ),
-                Transform.translate(
-                  offset: const Offset(0, -20),
-                  child: const CurrencyCard(
-                    name: "Dollar",
-                    code: "USD",
-                    amount: "55 622",
-                    icon: Icons.monetization_on_outlined,
-                    isInverted: true,
-                  ),
-                ),
-                Transform.translate(
-                  offset: const Offset(0, -40),
-                  child: const CurrencyCard(
-                    name: "Rupee",
-                    code: "INR",
-                    amount: "28 981",
-                    icon: Icons.currency_rupee_outlined,
-                    isInverted: false,
-                  ),
-                ),
+                ..._getCurrencyCards(),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  List<Widget> _getCurrencyCards() {
+    final List<Widget> currencyCards = [];
+    bool isInverted = false;
+
+    for (int i = 0; i < bankAccounts.length; i++) {
+      currencyCards.add(CurrencyCard(
+        name: bankAccounts[i].currency.name,
+        code: bankAccounts[i].currency.code,
+        amount: bankAccounts[i].getBalanceString(),
+        icon: bankAccounts[i].currency.icon,
+        isInverted: isInverted,
+        order: i,
+      ));
+      isInverted = !isInverted;
+    }
+    return currencyCards;
   }
 }
